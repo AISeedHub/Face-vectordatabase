@@ -44,6 +44,39 @@ def get_face_embedding(image_path):
         print(f"Error processing {image_path}: {e}")
         return None
 
+def get_gender_and_age(image_path):
+    """
+    Detects a face in an image
+    and returns gender and age information.
+    Returns None if no face is detected or multiple faces are found (for simplicity).
+    """
+    try:
+        # Load the image
+        img = cv2.imread(image_path)
+        if img is None:
+            print(f"Error: Unable to load image from {image_path}")
+            return None
+
+        # Detect faces in the image
+        faces = app.get(img)
+
+        # Ensure only one face is detected
+        if len(faces) == 1:
+            face = faces[0]
+            gender = face.gender if hasattr(face, "gender") else None
+            age = face.age if hasattr(face, "age") else None
+            return {"gender": gender, "age": age}
+        elif len(faces) == 0:
+            print(f"No face detected in {image_path}")
+            return None
+        else:
+            print(f"Multiple faces detected in {image_path}. Please use an image with a single face.")
+            return None
+    except Exception as e:
+        print(f"Error processing {image_path}: {e}")
+    return None
+
+
 def get_face_embedding_direct(image_path, bbox=None):
     """
     Extracts face embedding directly using the model, bypassing the app interface.
