@@ -115,12 +115,3 @@ def get_face_embedding_direct(image_path, bbox=None):
     except Exception as e:
         print(f"Error processing {image_path} with bbox {bbox}: {e}")
         return None
-
-# --- Test the functions (optional) ---
-# Example usage of get_face_embedding_direct
-# bbox = [50, 50, 200, 200]  # Example bounding box [x1, y1, x2, y2]
-# embedding = get_face_embedding_direct("path/to/your/test_face.jpg", bbox)
-# if embedding is not None:
-#     print(f"Embedding vector length: {len(embedding)}")
-# else:
-#     print("Could not get embedding.")
