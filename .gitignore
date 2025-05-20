@@ -175,4 +175,6 @@ cython_debug/
 
 /database
 /query
-/chroma_db
+/.chroma_db
+/casia dataset
+/LFW-data

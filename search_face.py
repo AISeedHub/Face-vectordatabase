@@ -1,4 +1,6 @@
 from get_embedding import get_face_embedding
+import weaviate
+import json
 
 def search_face(collection, query_image_path, top_n=3, threshold=0.7):
     print(f"\nSearching for faces similar to: {query_image_path}")
@@ -43,5 +45,43 @@ def search_face(collection, query_image_path, top_n=3, threshold=0.7):
         else:
             print(f"    No match (Similarity {similarity_score:.4f} < Threshold {threshold:.4f})")
     
+    if not found_match:
+        print("No match found above the similarity threshold.")
+
+
+def search_face_weaviate(collection, query_image_path, top_n=3, threshold=0.7):
+    """
+    Search for similar faces in a Weaviate collection using a query image.
+    """
+    print(f"\nSearching for faces similar to: {query_image_path}")
+    query_embedding = get_face_embedding(query_image_path)
+
+    if query_embedding is None:
+        print("Could not generate embedding for the query image.")
+        return
+
+    # Perform vector search in Weaviate
+    response = collection.query.near_vector(
+        near_vector=query_embedding,
+        limit=top_n,
+        distance=threshold, # max accepted distance
+        return_metadata=weaviate.classes.query.MetadataQuery(certainty=True, distance=True),
+    )
+
+    if not response or not response.objects:
+        print("No similar faces found by query.")
+        return
+
+    found_match = False
+    for obj in response.objects:
+        score = 1 - obj.metadata.distance
+        print(json.dumps(obj.properties, indent=2))
+        print(f"    Similarity Score: {score}")
+        if score is not None and score >= threshold:
+            print(f"    MATCH FOUND! (Score {score:.4f} >= Threshold {threshold:.4f})")
+            found_match = True
+        else:
+            print(f"    No match (Score {score:.4f} < Threshold {threshold:.4f})" if score is not None else "    No score available.")
+
     if not found_match:
         print("No match found above the similarity threshold.")

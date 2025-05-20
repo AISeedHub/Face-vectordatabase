@@ -1,6 +1,6 @@
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_ollama.llms import OllamaLLM
-from db import collection
+from collections import collection
 import json
 
 llm = OllamaLLM(model="llama3", temperature=0.1)
