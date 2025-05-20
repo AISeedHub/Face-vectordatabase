@@ -38,8 +38,10 @@ def get_face_embedding(image_path):
             print(f"No face detected in {image_path}")
             return None
         else:
-            print(f"Multiple faces detected in {image_path}. Please use an image with a single face.")
-            return None
+            # If multiple faces are detected, use the biggest one
+            print(f"Multiple faces detected in {image_path}. Using the largest face.")
+            face = max(faces, key=lambda x: x.bbox[2] * x.bbox[3])  # Choose the largest face
+            return face.embedding  # Return the embedding vector
     except Exception as e:
         print(f"Error processing {image_path}: {e}")
         return None
